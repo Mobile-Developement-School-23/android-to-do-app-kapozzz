@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/low_importance_btn"
+        android:title="@string/no"/>
+
+    <item
+        android:id="@+id/ordinary_importance_btn"
+        android:title="@string/low"/>
+
+    <item
+        android:id="@+id/urgent_importance_btn"
+        android:title="@string/urgent"/>
+
+
+
+</menu>

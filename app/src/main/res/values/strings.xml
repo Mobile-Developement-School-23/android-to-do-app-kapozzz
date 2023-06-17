@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">ToDo App</string>
+    <string name="save_button_text">SAVE</string>
+    <string name="input_note_hint">Something has to be done…</string>
+    <string name="importance_text">Importance</string>
+    <string name="no">No</string>
+    <string name="until_do">Make up to</string>
+    <string name="delete">Delete</string>
+    <string name="what_Im_doing">My deals</string>
+    <string name="complete_task">Complete -</string>
+    <string name="low">Low</string>
+    <string name="urgent">!! Urgent</string>
+    <string name="add_new_todo">add new todo</string>
+    <string name="task_complete_count">"Сomplete - "</string>
+    <string name="deadline_date">Deadline:</string>
+    <string name="empty_text_error">Empty text!</string>
+    <string name="remove_changes">Cancel changes?</string>
+    <string name="back">BACK</string>
+    <string name="yes">Yes</string>
+    <string name="task_complete">Task complete!</string>
+    <string name="are_you_sure">"Are you sure?"</string>
+    <string name="creation_date">Сreation date</string>
+</resources>

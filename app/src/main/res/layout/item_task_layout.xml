@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="14dp">
+
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/item_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="14dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/roboto_regular"
+        android:maxLength="@integer/material_motion_duration_long_1"
+        android:maxLines="3"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/importance_image"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_goneMarginStart="19dp"
+        tools:text="Купить пиво"
+        style="@style/TaskTextStyle"/>
+
+    <ImageView
+        android:id="@+id/importance_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="19dp"
+        android:src="@drawable/ic_urgent_importance"
+        android:textSize="20sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/space"
+        app:layout_constraintEnd_toStartOf="@+id/item_text"
+        app:layout_constraintStart_toEndOf="@+id/item_checkBox"
+        app:layout_constraintTop_toTopOf="@id/space"
+        app:layout_constraintVertical_bias="0.5"
+        tools:visibility="visible"/>
+
+    <ImageView
+        android:id="@+id/item_checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="19dp"
+        android:src="@drawable/ic_empty_checkbox"
+        android:clickable="false"
+        app:layout_constraintBottom_toBottomOf="@+id/importance_image"
+        app:layout_constraintEnd_toStartOf="@+id/importance_image"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/importance_image" />
+
+    <TextView
+        android:id="@+id/deadline_in_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_regular"
+        android:textColor="?attr/colorAccent"
+        android:textSize="13sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/data_text_view"
+        app:layout_constraintStart_toEndOf="@+id/data_text_view"
+        tools:text="01.01.1488"
+        tools:visibility="visible"
+        android:layout_marginStart="2dp"/>
+
+    <TextView
+        android:id="@+id/data_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/deadline_date"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@+id/importance_image"
+        tools:layout_editor_absoluteY="40dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/roboto_regular"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/item_text"
+        app:layout_goneMarginStart="19dp"
+        tools:visibility="visible"
+        style="@style/TaskTextStyle"/>
+
+    <Space
+        android:id="@+id/space"
+        android:layout_width="0sp"
+        android:layout_height="20sp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toStartOf="@id/item_text"
+        app:layout_constraintTop_toTopOf="@id/item_text" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+

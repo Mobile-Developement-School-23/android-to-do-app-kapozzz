@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Мои дела</string>
+    <string name="save_button_text">СОХРАНИТЬ</string>
+    <string name="input_note_hint">Что-то надо сделать…</string>
+    <string name="importance_text">Важность</string>
+    <string name="no">Нет</string>
+    <string name="until_do">Сделать до</string>
+    <string name="delete">Удалить</string>
+    <string name="what_Im_doing">Мои дела</string>
+    <string name="complete_task">Выполнено -</string>
+    <string name="low">Низкая</string>
+    <string name="urgent">!! Высокая</string>
+    <string name="add_new_todo">Добавить новую задачу</string>
+    <string name="task_complete_count">"Выполнено - "</string>
+    <string name="deadline_date">Крайний срок:</string>
+    <string name="empty_text_error">Пустая заметка!</string>
+    <string name="remove_changes">Отменить изменения?</string>
+    <string name="back">ВЕРНУТЬ</string>
+    <string name="yes">Да</string>
+    <string name="task_complete">Задача выполнена!</string>
+    <string name="are_you_sure">"Вы уверены? "</string>
+    <string name="creation_date">Дата создания</string>
+</resources>
