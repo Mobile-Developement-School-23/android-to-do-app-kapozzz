@@ -84,7 +84,13 @@ class MainToDoFragment : Fragment(), onClickCallbacks {
             .navigate(MainToDoFragmentDirections.actionMainToDoFragmentToChangeToDoFragment(item))
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        todoViewModel.tasksState = !mainAdapter.completedTasksIsVisible
+    }
+
     private fun hideOrShowBtOnClick() {
+        mainAdapter.completedTasksIsVisible = todoViewModel.tasksState
         if (mainAdapter.completedTasksIsVisible) {
             binding.hideOrShowComTaskButton.setImageDrawable(
                 ContextCompat.getDrawable(
@@ -100,6 +106,7 @@ class MainToDoFragment : Fragment(), onClickCallbacks {
             )
             mainAdapter.completedTasksIsVisible = true
         }
+        todoViewModel.tasksState = mainAdapter.completedTasksIsVisible
     }
 
 
@@ -130,11 +137,10 @@ class MainToDoFragment : Fragment(), onClickCallbacks {
             binding.root.findNavController()
                 .navigate(MainToDoFragmentDirections.actionMainToDoFragmentToNewToDoFragment())
         }
-
+        hideOrShowBtOnClick()
         binding.hideOrShowComTaskButton.setOnClickListener {
             hideOrShowBtOnClick()
         }
-
     }
 
     private fun initSwipeCallbacks() {

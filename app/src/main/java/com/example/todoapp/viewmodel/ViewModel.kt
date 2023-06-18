@@ -19,6 +19,7 @@ class ViewModel(application: Application) : AndroidViewModel(application) {
     var allToDoItems: LiveData<List<TodoItem>?>
     var completedTaskCount = MutableLiveData<Int>()
     var savedToDoItem: TodoItem? = null
+    var tasksState = false
 
     val job = Job()
     val scope = CoroutineScope(Dispatchers.IO + job)
