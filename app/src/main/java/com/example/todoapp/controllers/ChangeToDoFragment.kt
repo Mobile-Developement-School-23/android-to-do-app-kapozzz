@@ -38,7 +38,7 @@ class ChangeToDoFragment : Fragment() {
 
     private var deadline: Date? = null
 
-    private var importance: Importance? = null
+    private var importance: Importance = Importance.LOW
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -103,8 +103,8 @@ class ChangeToDoFragment : Fragment() {
             text = temp,
             importance = importance,
             deadline = deadline,
-            isCompleted = item.isCompleted,
-            creationDate = item.creationDate
+            done = item.done,
+            created_at = item.created_at
         )
         todoViewModel.savedToDoItem = itemForSave
     }
@@ -126,8 +126,8 @@ class ChangeToDoFragment : Fragment() {
             // Важность дела
             importance = item.importance
             importanceButton.text = when (item.importance) {
-                Importance.LOW -> resources.getString(R.string.low)
-                Importance.URGENT -> resources.getString(R.string.urgent).also {
+                Importance.BASIC -> resources.getString(R.string.low)
+                Importance.IMPORTANT -> resources.getString(R.string.urgent).also {
                     importanceButton.setTextColor(
                         ContextCompat.getColor(
                             requireContext(),
@@ -141,7 +141,7 @@ class ChangeToDoFragment : Fragment() {
 
             val converter = SimpleDateFormat("dd.MM.yy", Locale("ru","RU"))
             val convertedDeadline = item.deadline?.let { converter.format(it) }
-            val convertedCreationDate = converter.format(item.creationDate)
+            val convertedCreationDate = converter.format(item.created_at)
 
             // Крайний срок выполнения дела
             item.deadline?.let { itemDeadline ->
@@ -163,7 +163,7 @@ class ChangeToDoFragment : Fragment() {
     }
 
     private fun taskCompleted() {
-        if (!item.isCompleted) return
+        if (!item.done) return
         with(binding) {
             saveButton.isClickable = false
             saveButton.text = getString(R.string.task_complete)
@@ -191,7 +191,7 @@ class ChangeToDoFragment : Fragment() {
                     val color =
                         ContextCompat.getColor(requireContext().applicationContext, R.color.gray)
                     importanceButton.setTextColor(color)
-                    importance = null
+                    importance = Importance.LOW
                     true
                 }
 
@@ -200,7 +200,7 @@ class ChangeToDoFragment : Fragment() {
                     val color =
                         ContextCompat.getColor(requireContext().applicationContext, R.color.gray)
                     importanceButton.setTextColor(color)
-                    importance = Importance.LOW
+                    importance = Importance.BASIC
                     true
                 }
 
@@ -209,7 +209,7 @@ class ChangeToDoFragment : Fragment() {
                     val color =
                         ContextCompat.getColor(requireContext().applicationContext, R.color.red)
                     importanceButton.setTextColor(color)
-                    importance = Importance.URGENT
+                    importance = Importance.IMPORTANT
                     true
                 }
 
@@ -218,7 +218,7 @@ class ChangeToDoFragment : Fragment() {
         }
 
         binding.importanceButton.setOnClickListener {
-            if (!item.isCompleted) popupMenu.show()
+            if (!item.done) popupMenu.show()
         }
     }
 
@@ -271,7 +271,7 @@ class ChangeToDoFragment : Fragment() {
     }
 
     private fun saveButtonOnClick(): Boolean {
-        if (item.isCompleted) return true
+        if (item.done) return true
 
         val editText = binding.editText
         val temp = editText.text.toString()
@@ -286,8 +286,8 @@ class ChangeToDoFragment : Fragment() {
             text = temp,
             importance = importance,
             deadline = deadline,
-            isCompleted = false,
-            creationDate = item.creationDate
+            done = false,
+            created_at = item.created_at
         )
         todoViewModel.updateToDo(newToDo)
         navController.popBackStack()

@@ -14,7 +14,6 @@ import com.example.todoapp.R
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-
 class ToDoAdapter(val callbacks: onClickCallbacks) :
     androidx.recyclerview.widget.ListAdapter<TodoItem, ToDoAdapter.ToDoHolder>(ToDoDiffUtilCallback()) {
 
@@ -22,7 +21,7 @@ class ToDoAdapter(val callbacks: onClickCallbacks) :
         set(value) {
             field = value
             for ((position, task) in currentList.withIndex()) {
-                if (task.isCompleted) notifyItemChanged(position)
+                if (task.done) notifyItemChanged(position)
             }
         }
 
@@ -40,14 +39,14 @@ class ToDoAdapter(val callbacks: onClickCallbacks) :
         }
 
         // Скрывает выполненые задачи
-        if (!completedTasksIsVisible && item.isCompleted) {
+        if (!completedTasksIsVisible && item.done) {
             val params = holder.itemView.layoutParams
             params.height = 0
             holder.itemView.layoutParams = params
             holder.itemView.visibility = View.GONE
             return
         }
-        if (completedTasksIsVisible && item.isCompleted) {
+        if (completedTasksIsVisible && item.done) {
             val params = holder.itemView.layoutParams
             params.height = LayoutParams.WRAP_CONTENT
             holder.itemView.layoutParams = params
@@ -73,7 +72,7 @@ class ToDoAdapter(val callbacks: onClickCallbacks) :
             textView.text = item.text.trim()
             textView.setPaintFlags(textView.getPaintFlags())
 
-            if (item.isCompleted) {
+            if (item.done) {
                 completed.setImageResource(R.drawable.ic_complete_checked)
                 importance.visibility = View.GONE
                 deadline.visibility = View.GONE
@@ -94,7 +93,7 @@ class ToDoAdapter(val callbacks: onClickCallbacks) :
                     deadline.visibility = View.GONE
                 }
                 when (item.importance) {
-                    Importance.URGENT -> {
+                    Importance.IMPORTANT -> {
                         with(importance) {
                             visibility = View.VISIBLE
                             setColorFilter(
@@ -109,7 +108,7 @@ class ToDoAdapter(val callbacks: onClickCallbacks) :
                         completed.setImageResource(R.drawable.ic_deadline_checkbox)
                     }
 
-                    Importance.LOW -> {
+                    Importance.BASIC -> {
                         with(importance) {
                             visibility = View.VISIBLE
                             setColorFilter(

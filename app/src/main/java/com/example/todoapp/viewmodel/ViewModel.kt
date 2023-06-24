@@ -29,7 +29,7 @@ class ViewModel(application: Application) : AndroidViewModel(application) {
         completedTaskCount.value = if (list.isNullOrEmpty()) 0
         else {
             for (task in list) {
-                if (task.isCompleted) ++counter
+                if (task.done) ++counter
             }
             counter
         }
@@ -57,10 +57,6 @@ class ViewModel(application: Application) : AndroidViewModel(application) {
         scope.launch {
             repository.deleteToDo(itemID)
         }
-    }
-
-    fun generateRandomTodoItems() {
-        repository.generateTodoItems()
     }
 
     override fun onCleared() {

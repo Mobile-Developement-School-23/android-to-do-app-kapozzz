@@ -10,10 +10,10 @@ import java.util.UUID
 data class TodoItem(
     @PrimaryKey val id: UUID = UUID.randomUUID(),
     var text: String,
-    var importance: Importance?,
+    var importance: Importance,
     var deadline: Date?,
-    var isCompleted: Boolean,
-    val creationDate: Date
+    var done: Boolean,
+    val created_at: Date
 ) : Serializable
 
 

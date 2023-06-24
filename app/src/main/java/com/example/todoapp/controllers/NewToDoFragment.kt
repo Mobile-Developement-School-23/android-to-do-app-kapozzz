@@ -28,7 +28,7 @@ class NewToDoFragment : Fragment() {
     private lateinit var binding: FragmentNewRedactTodoLayoutBinding
     private lateinit var todoViewModel: ViewModel
     private lateinit var navController: NavController
-    private var importance: Importance? = null
+    private var importance: Importance = Importance.LOW
     private var deadline: Date? = null
 
     override fun onCreateView(
@@ -73,8 +73,8 @@ class NewToDoFragment : Fragment() {
             text = temp,
             importance = importance,
             deadline = deadline,
-            isCompleted = false,
-            creationDate = Date()
+            done = false,
+            created_at = Date()
         )
         todoViewModel.savedToDoItem = itemForSave
     }
@@ -91,13 +91,14 @@ class NewToDoFragment : Fragment() {
                 deadlineText.text = convertedDate
             }
         }
-        importance = savedItem?.importance
+        importance = savedItem?.importance!!
         when(savedItem?.importance) {
-            Importance.LOW -> binding.importanceButton.text = getString(R.string.low)
-            Importance.URGENT -> binding.importanceButton.text = getString(R.string.urgent).also {
+            Importance.LOW -> binding.importanceButton.text = getString(R.string.no)
+            Importance.BASIC -> binding.importanceButton.text = getString(R.string.low)
+            Importance.IMPORTANT -> binding.importanceButton.text = getString(R.string.urgent).also {
                 binding.importanceButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_light_red))
             }
-            else -> binding.importanceButton.text = getString(R.string.no)
+            else -> throw IllegalStateException("invalid importance state")
         }
     }
 
@@ -118,8 +119,8 @@ class NewToDoFragment : Fragment() {
             text = temp,
             importance = importance,
             deadline = if (binding.deadlineSwitch.isChecked) deadline else null,
-            isCompleted = completed,
-            creationDate = Date()
+            done = completed,
+            created_at = Date()
         )
         todoViewModel.insertToDo(newToDo)
         navController.popBackStack()
@@ -138,7 +139,7 @@ class NewToDoFragment : Fragment() {
                     val color =
                         ContextCompat.getColor(requireContext().applicationContext, R.color.gray)
                     importanceButton.setTextColor(color)
-                    importance = null
+                    importance = Importance.LOW
                     true
                 }
 
@@ -147,7 +148,7 @@ class NewToDoFragment : Fragment() {
                     val color =
                         ContextCompat.getColor(requireContext().applicationContext, R.color.gray)
                     importanceButton.setTextColor(color)
-                    importance = Importance.LOW
+                    importance = Importance.BASIC
                     true
                 }
 
@@ -156,7 +157,7 @@ class NewToDoFragment : Fragment() {
                     val color =
                         ContextCompat.getColor(requireContext().applicationContext, R.color.red)
                     importanceButton.setTextColor(color)
-                    importance = Importance.URGENT
+                    importance = Importance.IMPORTANT
                     true
                 }
 

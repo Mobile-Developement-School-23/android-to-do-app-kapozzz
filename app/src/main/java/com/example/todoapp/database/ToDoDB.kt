@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 import com.example.todoapp.model.TodoItem
 
 // Создание базы данных
-@Database(entities = [TodoItem::class], version = 9, exportSchema = false)
+@Database(entities = [TodoItem::class], version = 10, exportSchema = false)
 @TypeConverters(TypeConverter::class)
 abstract class ToDoDB() : RoomDatabase() {
     abstract fun mainDAO(): DAO

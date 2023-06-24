@@ -1,6 +1,5 @@
 package com.example.todoapp.controllers
 
-import android.content.Context
 import android.graphics.Canvas
 import android.os.Bundle
 import android.util.TypedValue
@@ -65,18 +64,6 @@ class MainToDoFragment : Fragment(), onClickCallbacks {
         binding.recyclerViewRootCardView.visibility = View.VISIBLE
 
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val sp = requireActivity().getSharedPreferences("myPref", Context.MODE_PRIVATE)
-        val isVariableTrue = sp.getBoolean("myVariable", false)
-
-        if (!isVariableTrue) {
-            todoViewModel.generateRandomTodoItems()
-            sp.edit().putBoolean("myVariable", true).apply()
-        }
     }
 
     override fun onItemClick(item: TodoItem) {
@@ -166,7 +153,7 @@ class MainToDoFragment : Fragment(), onClickCallbacks {
                 val position = viewHolder.bindingAdapterPosition
                 val item = mainAdapter.currentList[position]
 
-                val swipeFlags = if (item.isCompleted) ItemTouchHelper.LEFT else
+                val swipeFlags = if (item.done) ItemTouchHelper.LEFT else
                     ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
 
                 val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN
@@ -192,7 +179,7 @@ class MainToDoFragment : Fragment(), onClickCallbacks {
                     }
 
                     ItemTouchHelper.RIGHT -> {
-                        item.isCompleted = true
+                        item.done = true
                         todoViewModel.updateToDo(item)
                         mainAdapter.notifyItemChanged(position)
                     }
