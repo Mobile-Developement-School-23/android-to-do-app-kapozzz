@@ -79,13 +79,7 @@ class FragmentMain : Fragment(), onClickCallbacks {
             .navigate(FragmentMainDirections.actionMainToDoFragmentToChangeToDoFragment(item))
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        todoViewModel.tasksState = !mainAdapter.completedTasksIsVisible
-    }
-
     private fun hideOrShowBtOnClick() {
-        mainAdapter.completedTasksIsVisible = todoViewModel.tasksState
         if (mainAdapter.completedTasksIsVisible) {
             binding.hideOrShowComTaskButton.setImageDrawable(
                 ContextCompat.getDrawable(
@@ -101,7 +95,6 @@ class FragmentMain : Fragment(), onClickCallbacks {
             )
             mainAdapter.completedTasksIsVisible = true
         }
-        todoViewModel.tasksState = mainAdapter.completedTasksIsVisible
     }
 
     private fun initProgressBar() {
@@ -174,7 +167,6 @@ class FragmentMain : Fragment(), onClickCallbacks {
             binding.root.findNavController()
                 .navigate(FragmentMainDirections.actionMainToDoFragmentToNewToDoFragment())
         }
-        hideOrShowBtOnClick()
         binding.hideOrShowComTaskButton.setOnClickListener {
             hideOrShowBtOnClick()
         }
@@ -218,7 +210,6 @@ class FragmentMain : Fragment(), onClickCallbacks {
                 return false
             }
 
-            // Если задача выполнена, то запрещаем свайп вправо это задачи
             override fun getMovementFlags(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder
@@ -233,7 +224,6 @@ class FragmentMain : Fragment(), onClickCallbacks {
                 return makeMovementFlags(dragFlags, swipeFlags)
             }
 
-            // Обработка свайпов
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.bindingAdapterPosition
                 val item = mainAdapter.currentList[position]
@@ -265,7 +255,6 @@ class FragmentMain : Fragment(), onClickCallbacks {
                 return true
             }
 
-            // Устанавливаем иконки и цвет для свайпов
             override fun onChildDraw(
                 c: Canvas,
                 recyclerView: RecyclerView,

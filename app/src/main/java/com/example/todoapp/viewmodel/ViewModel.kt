@@ -40,9 +40,6 @@ class ViewModel(val application: ToDoApplication) : AndroidViewModel(application
 
     var savedToDoItem: TodoItem? = null
 
-    var tasksState = false
-
-
     private val _code = MutableLiveData<NetworkResult<ElementResponse>?>()
         .apply { NetworkResult.Success("OK") }
     val networkResult: LiveData<NetworkResult<ElementResponse>?>

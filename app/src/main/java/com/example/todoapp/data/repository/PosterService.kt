@@ -93,8 +93,6 @@ class PosterService(
 
     private fun merge() {
         scope.launch {
-            coroutineScope {
-
                 withContext(Dispatchers.Main) {
                     _load.value = true
                 }
@@ -193,8 +191,6 @@ class PosterService(
                 withContext(Dispatchers.Main) {
                     _load.value = false
                 }
-            }
-            scope.cancel()
         }
     }
 

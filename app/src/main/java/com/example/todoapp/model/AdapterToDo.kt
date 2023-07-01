@@ -38,7 +38,6 @@ class ToDoAdapter(val callbacks: onClickCallbacks) :
             callbacks.onItemClick(item)
         }
 
-        // Скрывает выполненые задачи
         if (!completedTasksIsVisible && item.done) {
             val params = holder.itemView.layoutParams
             params.height = 0
