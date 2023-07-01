@@ -14,6 +14,7 @@ import androidx.navigation.findNavController
 import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentNewRedactTodoLayoutBinding
 import com.example.todoapp.model.Importance
+import com.example.todoapp.model.ToDoApplication
 import com.example.todoapp.model.TodoItem
 import com.example.todoapp.viewmodel.ViewModel
 import com.example.todoapp.viewmodel.ViewModelFactory
@@ -23,7 +24,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.UUID
 
-class NewToDoFragment : Fragment() {
+class FragmentNew : Fragment() {
 
     private lateinit var binding: FragmentNewRedactTodoLayoutBinding
     private lateinit var todoViewModel: ViewModel
@@ -43,7 +44,10 @@ class NewToDoFragment : Fragment() {
             false
         )
         todoViewModel =
-            ViewModelProvider(this, ViewModelFactory(requireActivity().application))[ViewModel::class.java]
+            ViewModelProvider(
+                this,
+                ViewModelFactory(requireActivity().application as ToDoApplication)
+            )[ViewModel::class.java]
 
         if (savedInstanceState != null) configurationChange()
 
@@ -67,6 +71,7 @@ class NewToDoFragment : Fragment() {
 
         val editText = binding.editText
         val temp = editText.text.toString()
+        val currentDate = Date()
 
         val itemForSave = TodoItem(
             id = UUID.randomUUID(),
@@ -74,7 +79,8 @@ class NewToDoFragment : Fragment() {
             importance = importance,
             deadline = deadline,
             done = false,
-            created_at = Date()
+            created_at = Date(),
+            changed_at = currentDate.time / 1000
         )
         todoViewModel.savedToDoItem = itemForSave
     }
@@ -92,12 +98,19 @@ class NewToDoFragment : Fragment() {
             }
         }
         importance = savedItem?.importance!!
-        when(savedItem?.importance) {
+        when (savedItem?.importance) {
             Importance.LOW -> binding.importanceButton.text = getString(R.string.no)
             Importance.BASIC -> binding.importanceButton.text = getString(R.string.low)
-            Importance.IMPORTANT -> binding.importanceButton.text = getString(R.string.urgent).also {
-                binding.importanceButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_light_red))
-            }
+            Importance.IMPORTANT -> binding.importanceButton.text =
+                getString(R.string.urgent).also {
+                    binding.importanceButton.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.color_light_red
+                        )
+                    )
+                }
+
             else -> throw IllegalStateException("invalid importance state")
         }
     }
@@ -114,13 +127,16 @@ class NewToDoFragment : Fragment() {
             return true
         }
 
+        val currentDate = Date()
+
         val completed = false
         val newToDo = TodoItem(
             text = temp,
             importance = importance,
             deadline = if (binding.deadlineSwitch.isChecked) deadline else null,
             done = completed,
-            created_at = Date()
+            created_at = Date(),
+            changed_at = currentDate.time / 1000
         )
         todoViewModel.insertToDo(newToDo)
         navController.popBackStack()

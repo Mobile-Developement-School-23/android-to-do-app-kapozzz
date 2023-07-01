@@ -16,6 +16,7 @@ import androidx.navigation.findNavController
 import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentNewRedactTodoLayoutBinding
 import com.example.todoapp.model.Importance
+import com.example.todoapp.model.ToDoApplication
 import com.example.todoapp.model.TodoItem
 import com.example.todoapp.viewmodel.ViewModel
 import com.example.todoapp.viewmodel.ViewModelFactory
@@ -24,7 +25,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class ChangeToDoFragment : Fragment() {
+open class FragmentChange : Fragment() {
 
     private lateinit var binding: FragmentNewRedactTodoLayoutBinding
 
@@ -32,7 +33,7 @@ class ChangeToDoFragment : Fragment() {
 
     private lateinit var navController: NavController
 
-    private lateinit var argumentsFromMain: ChangeToDoFragmentArgs
+    private lateinit var argumentsFromMain: FragmentChangeArgs
 
     private lateinit var item: TodoItem
 
@@ -55,13 +56,13 @@ class ChangeToDoFragment : Fragment() {
 
         todoViewModel = ViewModelProvider(
             this,
-            ViewModelFactory(requireActivity().application)
+            ViewModelFactory(requireActivity().application as ToDoApplication)
         )[ViewModel::class.java]
 
         if (savedInstanceState != null) {
             item = todoViewModel.savedToDoItem ?: throw IllegalStateException("my error")
         } else {
-            argumentsFromMain = ChangeToDoFragmentArgs.fromBundle(requireArguments())
+            argumentsFromMain = FragmentChangeArgs.fromBundle(requireArguments())
             item = argumentsFromMain.todoitem
         }
 
@@ -97,6 +98,7 @@ class ChangeToDoFragment : Fragment() {
 
         val editText = binding.editText
         val temp = editText.text.toString()
+        val currentDate = Date()
 
         val itemForSave = TodoItem(
             id = item.id,
@@ -104,7 +106,8 @@ class ChangeToDoFragment : Fragment() {
             importance = importance,
             deadline = deadline,
             done = item.done,
-            created_at = item.created_at
+            created_at = item.created_at,
+            changed_at = currentDate.time / 1000
         )
         todoViewModel.savedToDoItem = itemForSave
     }
@@ -139,7 +142,7 @@ class ChangeToDoFragment : Fragment() {
                 else -> resources.getString(R.string.no)
             }
 
-            val converter = SimpleDateFormat("dd.MM.yy", Locale("ru","RU"))
+            val converter = SimpleDateFormat("dd.MM.yy", Locale("ru", "RU"))
             val convertedDeadline = item.deadline?.let { converter.format(it) }
             val convertedCreationDate = converter.format(item.created_at)
 
@@ -260,7 +263,7 @@ class ChangeToDoFragment : Fragment() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle(getString(R.string.are_you_sure))
         builder.setPositiveButton(R.string.yes) { _, _ ->
-            todoViewModel.deleteToDo(item.id.toString())
+            todoViewModel.deleteToDo(item)
             navController.popBackStack()
         }
         builder.setNegativeButton(R.string.no) { dialog, _ ->
@@ -281,13 +284,16 @@ class ChangeToDoFragment : Fragment() {
             return true
         }
 
+        val currentDate = Date()
+
         val newToDo = TodoItem(
             id = item.id,
             text = temp,
             importance = importance,
             deadline = deadline,
             done = false,
-            created_at = item.created_at
+            created_at = item.created_at,
+            changed_at = currentDate.time / 1000
         )
         todoViewModel.updateToDo(newToDo)
         navController.popBackStack()

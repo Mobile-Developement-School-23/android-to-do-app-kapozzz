@@ -1,4 +1,4 @@
-package com.example.todoapp.database
+package com.example.todoapp.data.client
 
 import android.content.Context
 import androidx.room.Database
@@ -7,8 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.todoapp.model.TodoItem
 
-// Создание базы данных
-@Database(entities = [TodoItem::class], version = 10, exportSchema = false)
+@Database(entities = [TodoItem::class], version = 24, exportSchema = false)
 @TypeConverters(TypeConverter::class)
 abstract class ToDoDB() : RoomDatabase() {
     abstract fun mainDAO(): DAO

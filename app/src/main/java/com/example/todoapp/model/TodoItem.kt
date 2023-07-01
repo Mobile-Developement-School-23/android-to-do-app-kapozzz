@@ -1,8 +1,11 @@
 package com.example.todoapp.model
 
+import android.graphics.Color
+import android.provider.CalendarContract.Colors
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.Serializable
+import java.time.LocalDate
 import java.util.Date
 import java.util.UUID
 
@@ -13,7 +16,10 @@ data class TodoItem(
     var importance: Importance,
     var deadline: Date?,
     var done: Boolean,
-    val created_at: Date
+    var color: String = Color.YELLOW.toString(),
+    val created_at: Date,
+    var changed_at: Long,
+    val last_updated_by: String = "kapozzz"
 ) : Serializable
 
 

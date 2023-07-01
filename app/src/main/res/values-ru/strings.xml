@@ -21,4 +21,6 @@
     <string name="task_complete">Задача выполнена!</string>
     <string name="are_you_sure">"Вы уверены? "</string>
     <string name="creation_date">Дата создания</string>
+    <string name="error500">Синхронизация на нескольких устройствах временно недоступна</string>
+    <string name="error400">Нестабильное интернет соединение</string>
 </resources>

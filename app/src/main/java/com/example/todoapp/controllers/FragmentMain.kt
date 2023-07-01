@@ -1,7 +1,9 @@
 package com.example.todoapp.controllers
 
 import android.graphics.Canvas
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -9,14 +11,17 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
+import com.example.todoapp.data.repository.NetworkResult
 import com.example.todoapp.databinding.FragmentMainLayoutBinding
 import com.example.todoapp.model.ToDoAdapter
+import com.example.todoapp.model.ToDoApplication
 import com.example.todoapp.model.TodoItem
 import com.example.todoapp.model.onClickCallbacks
 import com.example.todoapp.viewmodel.ViewModel
@@ -25,7 +30,7 @@ import com.google.android.material.snackbar.Snackbar
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 
 
-class MainToDoFragment : Fragment(), onClickCallbacks {
+class FragmentMain : Fragment(), onClickCallbacks {
 
     private lateinit var binding: FragmentMainLayoutBinding
 
@@ -44,31 +49,34 @@ class MainToDoFragment : Fragment(), onClickCallbacks {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_layout, container, false)
 
         todoViewModel =
-            ViewModelProvider(this, ViewModelFactory(requireActivity().application)).get(
+            ViewModelProvider(
+                this,
+                ViewModelFactory(requireActivity().application as ToDoApplication)
+            ).get(
                 ViewModel::class.java
             )
+        return binding.root
+    }
 
-        // Настройка recycler view
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         initRecyclerView()
 
-        // Следим за изменениями списка заметок в базе данных, и обновляем список на экране при любом изменении
         initObservers()
 
-        // Добавляем слушатели нажатий
-        initListeners()
-
-        // Настройка свайпов, удаление/выполнение
         initSwipeCallbacks()
 
-        binding.mainFragmentProgressBar.visibility = View.GONE
-        binding.recyclerViewRootCardView.visibility = View.VISIBLE
+        initProgressBar()
 
-        return binding.root
+        initListeners()
+
+        if ((requireActivity().application as ToDoApplication).isInternetAvailable()) todoViewModel.updateDataFromServer()
     }
 
     override fun onItemClick(item: TodoItem) {
         binding.root.findNavController()
-            .navigate(MainToDoFragmentDirections.actionMainToDoFragmentToChangeToDoFragment(item))
+            .navigate(FragmentMainDirections.actionMainToDoFragmentToChangeToDoFragment(item))
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -96,6 +104,31 @@ class MainToDoFragment : Fragment(), onClickCallbacks {
         todoViewModel.tasksState = mainAdapter.completedTasksIsVisible
     }
 
+    private fun initProgressBar() {
+        todoViewModel.progressBarIsActive.observe(viewLifecycleOwner, Observer { isActive ->
+            if (isActive) {
+                with(binding) {
+                    mainFragmentProgressBar.visibility = View.VISIBLE
+                    recyclerViewRootCardView.visibility = View.GONE
+                    addButton.visibility = View.GONE
+                    completedTodoTextView.visibility = View.GONE
+                    hideOrShowComTaskButton.visibility = View.GONE
+                    refreshButton.visibility = View.GONE
+                    noInternetButton.visibility = View.GONE
+                }
+            } else {
+                with(binding) {
+                    mainFragmentProgressBar.visibility = View.GONE
+                    recyclerViewRootCardView.visibility = View.VISIBLE
+                    addButton.visibility = View.VISIBLE
+                    completedTodoTextView.visibility = View.VISIBLE
+                    hideOrShowComTaskButton.visibility = View.VISIBLE
+                    hideOrShowRefreshButton()
+                }
+            }
+        })
+    }
+
 
     private fun initRecyclerView() {
         mainAdapter = ToDoAdapter(this)
@@ -109,7 +142,9 @@ class MainToDoFragment : Fragment(), onClickCallbacks {
 
     private fun initObservers() {
         todoViewModel.allToDoItems.observe(viewLifecycleOwner) { newToDoList ->
-            mainAdapter.submitList(newToDoList?.reversed() ?: emptyList())
+            val clearList = newToDoList?.filter { it.color != Color.RED.toString() }
+                ?.sortedByDescending { it.changed_at } ?: emptyList()
+            mainAdapter.submitList(clearList)
         }
 
         todoViewModel.completedTaskCount.observe(viewLifecycleOwner) { completedTaskCount ->
@@ -117,16 +152,54 @@ class MainToDoFragment : Fragment(), onClickCallbacks {
                 resources.getString(R.string.task_complete_count) + completedTaskCount
             binding.completedTodoTextView.text = completedTaskCountText
         }
+
+        todoViewModel.networkResult.observe(viewLifecycleOwner) { networkResult ->
+            if (networkResult != null) {
+                if (networkResult is NetworkResult.Error) Snackbar.make(
+                    binding.root,
+                    "Invalid server",
+                    Snackbar.LENGTH_LONG
+                ).show()
+                if (networkResult is NetworkResult.Exception) Snackbar.make(
+                    binding.root,
+                    "Invalid client",
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+        }
     }
 
     private fun initListeners() {
         binding.addButton.setOnClickListener {
             binding.root.findNavController()
-                .navigate(MainToDoFragmentDirections.actionMainToDoFragmentToNewToDoFragment())
+                .navigate(FragmentMainDirections.actionMainToDoFragmentToNewToDoFragment())
         }
         hideOrShowBtOnClick()
         binding.hideOrShowComTaskButton.setOnClickListener {
             hideOrShowBtOnClick()
+        }
+
+        hideOrShowRefreshButton()
+    }
+
+    private fun hideOrShowRefreshButton() {
+        if ((requireActivity().application as ToDoApplication).isInternetAvailable()) {
+            binding.refreshButton.visibility = View.VISIBLE
+            binding.noInternetButton.visibility = View.GONE
+            binding.refreshButton.setOnClickListener {
+                todoViewModel.updateDataFromServer()
+            }
+        } else {
+            binding.refreshButton.visibility = View.GONE
+            binding.noInternetButton.visibility = View.VISIBLE
+            binding.noInternetButton.setOnClickListener {
+                Snackbar.make(
+                    requireContext(),
+                    binding.root,
+                    getString(R.string.error400),
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
         }
     }
 
@@ -164,22 +237,24 @@ class MainToDoFragment : Fragment(), onClickCallbacks {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.bindingAdapterPosition
                 val item = mainAdapter.currentList[position]
+                val cl = item.color
                 when (direction) {
                     ItemTouchHelper.LEFT -> {
-                        todoViewModel.deleteToDo(item.id.toString())
+                        todoViewModel.deleteToDo(item)
                         Snackbar.make(
                             binding.root,
                             getString(R.string.remove_changes),
                             Snackbar.LENGTH_LONG
                         )
                             .setAction(getString(R.string.back)) {
-                                todoViewModel.insertToDo(item)
+                                todoViewModel.updateToDo(item.apply { color = cl })
                             }
                             .show()
                     }
 
                     ItemTouchHelper.RIGHT -> {
                         item.done = true
+                        item.changed_at += 1
                         todoViewModel.updateToDo(item)
                         mainAdapter.notifyItemChanged(position)
                     }
@@ -231,5 +306,5 @@ class MainToDoFragment : Fragment(), onClickCallbacks {
 
         val itemTouchHelper = ItemTouchHelper(swipeCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
-        }
+    }
 }

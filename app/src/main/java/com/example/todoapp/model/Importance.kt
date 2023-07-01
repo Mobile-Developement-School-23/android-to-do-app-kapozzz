@@ -5,9 +5,9 @@ import java.lang.IllegalStateException
 
 // Важность дела
 enum class Importance(val level: String) {
-    LOW("0"),
-    BASIC("-1"),
-    IMPORTANT("1");
+    LOW("low"),
+    BASIC("basic"),
+    IMPORTANT("important");
 
     companion object {
         fun fromString(importance: String): Importance {

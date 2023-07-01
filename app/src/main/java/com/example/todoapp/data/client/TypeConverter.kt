@@ -1,4 +1,4 @@
-package com.example.todoapp.database
+package com.example.todoapp.data.client
 
 import androidx.room.TypeConverter
 import com.example.todoapp.model.Importance
@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.UUID
-
 
 class TypeConverter {
     @TypeConverter

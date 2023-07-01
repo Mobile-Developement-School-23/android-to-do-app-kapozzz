@@ -20,4 +20,6 @@
     <string name="task_complete">Task complete!</string>
     <string name="are_you_sure">"Are you sure?"</string>
     <string name="creation_date">Сreation date</string>
+    <string name="error500">Syncing on multiple devices is temporarily unavailable</string>
+    <string name="error400">Unstable internet connection</string>
 </resources>
