@@ -35,7 +35,7 @@ class AppModule {
 
     @Provides
     fun provideNotificationHandler() : UserNotificationHandler {
-        return UserNotificationHandlerImpl
+        return UserNotificationHandlerImpl.getInstance()
     }
 
 }

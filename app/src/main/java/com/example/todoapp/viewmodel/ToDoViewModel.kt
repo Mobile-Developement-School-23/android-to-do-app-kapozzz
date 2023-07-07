@@ -6,20 +6,24 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.example.todoapp.R
-import com.example.todoapp.data.model.NetworkResult
 import com.example.todoapp.data.RepositoryToDo
-import com.example.todoapp.data.model.ElementResponse
 import com.example.todoapp.ioc.ToDoApplication
+import com.example.todoapp.ui.model.NotificationState
 import com.example.todoapp.ui.model.TodoItem
+import com.example.todoapp.ui.usecases.UserNotificationHandler
+import com.example.todoapp.ui.usecases.UserNotificationHandlerImpl
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class ToDoViewModel(val application: ToDoApplication, val repository: RepositoryToDo) : AndroidViewModel(application) {
+class ToDoViewModel(
+    val application: ToDoApplication,
+    val repository: RepositoryToDo,
+    val notificationHandler: UserNotificationHandler
+) : AndroidViewModel(application) {
 
     private val scope = scopeConstructor()
 
@@ -31,9 +35,9 @@ class ToDoViewModel(val application: ToDoApplication, val repository: Repository
 
     var savedToDoItem: TodoItem? = null
 
-    var snackbarWithError: ((message: Int) -> Unit)? = null
+    var snackbarWithError: ((message: String) -> Unit)? = null
 
-    private val observer = Observer<List<TodoItem>?> { list ->
+    private val completedTaskObserver = Observer<List<TodoItem>?> { list ->
         var counter = 0
         completedTaskCount.value = if (list.isNullOrEmpty()) 0
         else {
@@ -44,71 +48,60 @@ class ToDoViewModel(val application: ToDoApplication, val repository: Repository
         }
     }
 
+    private val notificationMessageObserver = Observer<String> { message ->
+        snackbarWithError?.invoke(message) ?: Log.e(
+            "UserNotificationHandler",
+            "Error: view model snackbar is null"
+        )
+    }
+
     init {
-        allToDoItems.observeForever(observer)
+        allToDoItems.observeForever(completedTaskObserver)
+        notificationHandler.message.observeForever(notificationMessageObserver)
     }
 
     fun insertToDo(newToDo: TodoItem) {
         scope.launch {
-            val networkResult = repository.insertTodo(newToDo)
-            handlingOperation(networkResult)
+            repository.insertTodo(newToDo)
+            Log.d("NEW TODO", "insertToDo in ViewModel")
         }
     }
 
     fun updateToDo(todoItem: TodoItem) {
         scope.launch {
-            val networkResult = repository.updateToDo(todoItem)
-            handlingOperation(networkResult)
+            repository.updateToDo(todoItem)
         }
     }
 
     fun deleteToDo(todoItem: TodoItem) {
         scope.launch {
-            val networkResult = repository.deleteToDo(todoItem)
-            handlingOperation(networkResult)
+            repository.deleteToDo(todoItem)
         }
     }
 
-    fun refreshList() { repository.updateDataFromServer() }
+    fun refreshList() {
+        scope.launch {
+            repository.updateDataFromServer()
+        }
+    }
 
     private fun scopeConstructor(): CoroutineScope {
         val coroutineExceptionHandler =
             CoroutineExceptionHandler { _, throwable ->
                 Log.e("Coroutine Exception Handler", "Error: ${throwable.message}")
-                snackbarWithError?.let { it(R.string.incorrect_operation) }
+                notificationHandler.state.value = NotificationState.Error(
+                    UserNotificationHandlerImpl.COROUTINE_ERROR,
+                    "Error: ${throwable.message}"
+                )
             }
+
         return CoroutineScope(Dispatchers.IO + coroutineExceptionHandler + CoroutineName("ViewModelCustomScope"))
-    }
-
-    private suspend fun handlingOperation(result: NetworkResult<ElementResponse>?) {
-        withContext(Dispatchers.Main) {
-            if (result != null) {
-                when (result) {
-                    is NetworkResult.Error -> {
-                        snackbarWithError?.let { it(R.string.invalid_server) }
-                        Log.i(
-                            "Network result",
-                            "State: Error(invalid server); message: ${result.message}; code: ${result.code}"
-                        )
-                    }
-
-                    is NetworkResult.Exception -> {
-                        snackbarWithError?.let { it(R.string.invalid_client) }
-                        Log.i(
-                            "Network Result",
-                            "State: Exception(invalid client); message: ${result.e}"
-                        )
-                    }
-
-                    else -> Log.i("Network Result", "State: Successful")
-                }
-            } else Log.i("Network Result", "State: internet is not available")
-        }
     }
 
     override fun onCleared() {
         super.onCleared()
-        allToDoItems.removeObserver(observer)
+        allToDoItems.removeObserver(completedTaskObserver)
+        notificationHandler.message.removeObserver(notificationMessageObserver)
         scope.cancel()
     }
 }

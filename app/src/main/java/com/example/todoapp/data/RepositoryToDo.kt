@@ -1,6 +1,7 @@
 package com.example.todoapp.data
 
 import android.graphics.Color
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.work.Constraints
 import androidx.work.NetworkType
@@ -36,29 +37,27 @@ class RepositoryToDo @Inject constructor(
         WorkManager.getInstance(application).enqueue(workPeriodicRequest)
     }
 
-    fun updateDataFromServer() {
+    suspend fun updateDataFromServer() {
         poster.updateData()
     }
 
-    suspend fun insertTodo(item: TodoItem): NetworkResult<ElementResponse>? {
+    suspend fun insertTodo(item: TodoItem) {
         dao.insertToDo(item).also {
-            if (application.isInternetAvailableAppField()) return poster.insertToDo(item)
+            if (application.isInternetAvailableAppField()) poster.insertToDo(item)
+            Log.d("NEW TODO", "insertToDo in rep with internet")
         }
-        return null
     }
 
-    suspend fun updateToDo(item: TodoItem): NetworkResult<ElementResponse>? {
+    suspend fun updateToDo(item: TodoItem) {
         dao.updateToDoItem(item).also {
-            if (application.isInternetAvailableAppField()) return poster.updateToDo(item)
+            if (application.isInternetAvailableAppField()) poster.updateToDo(item)
         }
-        return null
     }
 
-    suspend fun deleteToDo(item: TodoItem): NetworkResult<ElementResponse>? {
+    suspend fun deleteToDo(item: TodoItem) {
         dao.updateToDoItem(item.apply { color = Color.RED.toString() }).also {
-            if (application.isInternetAvailableAppField()) return poster.updateToDo(item)
+            if (application.isInternetAvailableAppField()) poster.updateToDo(item)
         }
-        return null
     }
 
     fun getToDoItems(): LiveData<List<TodoItem>?> = dao.getToDoItems()

@@ -142,9 +142,7 @@ class FragmentMainViewController @Inject constructor (
 
     private fun initObservers() {
 
-        viewModel.snackbarWithError = { resID ->
-            val res = activity.resources
-            val message = res.getString(resID)
+        viewModel.snackbarWithError = { message: String ->
             Snackbar.make(
                 rootView,
                 message,

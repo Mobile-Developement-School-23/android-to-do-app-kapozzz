@@ -7,21 +7,24 @@ import com.example.todoapp.R
 import com.example.todoapp.ioc.ToDoApplication
 import com.example.todoapp.ui.model.NotificationState
 
-object UserNotificationHandlerImpl : UserNotificationHandler {
+class UserNotificationHandlerImpl private constructor() : UserNotificationHandler {
 
     override val state: MutableLiveData<NotificationState<Any>> = MutableLiveData()
 
     override val message: MutableLiveData<String> = MutableLiveData()
 
-    private val application = ToDoApplication.getInstance()
+    private var application: ToDoApplication
+
+    private val observer = Observer<NotificationState<Any>> { state ->
+        handleState(state)
+        Log.i("UserNotificationHandler", "New state - ${state}")
+    }
 
     init {
         state.value = NotificationState.Success("handler init complete")
         Log.i("UserNotificationHandler", "Info: handler init complete")
-    }
-
-    private val observer = Observer<NotificationState<Any>> {
-        handleState(it)
+        application = ToDoApplication.getInstance()
+        initObserver()
     }
 
     private fun initObserver() {
@@ -30,7 +33,7 @@ object UserNotificationHandlerImpl : UserNotificationHandler {
 
     private fun handleState(state: NotificationState<Any>) {
 
-        when(state) {
+        when (state) {
             is NotificationState.Success -> {
                 return
             }
@@ -49,4 +52,23 @@ object UserNotificationHandlerImpl : UserNotificationHandler {
         state.removeObserver(observer)
     }
 
+    companion object {
+        const val SERVER_ERROR = 500
+        const val CLIENT_ERROR = 400
+        const val COROUTINE_ERROR = 600
+
+        var notHandler: UserNotificationHandlerImpl? = null
+        val lock = Any()
+
+        fun getInstance(): UserNotificationHandlerImpl {
+            if (notHandler == null) {
+                synchronized(lock) {
+                    if (notHandler == null) {
+                        notHandler = UserNotificationHandlerImpl()
+                    }
+                }
+            }
+            return notHandler!!
+        }
+    }
 }
