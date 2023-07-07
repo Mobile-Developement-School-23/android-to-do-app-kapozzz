@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/mainToDoFragment"
-        android:name="com.example.todoapp.controllers.FragmentMain"
+        android:name="com.example.todoapp.ui.FragmentMain"
         android:label="MainToDoFragment" >
         <action
             android:id="@+id/action_mainToDoFragment_to_newToDoFragment"
@@ -28,14 +28,14 @@
     </fragment>
     <fragment
         android:id="@+id/newToDoFragment"
-        android:name="com.example.todoapp.controllers.FragmentNew"
+        android:name="com.example.todoapp.ui.FragmentNew"
         android:label="NewToDoFragment" />
     <fragment
         android:id="@+id/changeToDoFragment"
-        android:name="com.example.todoapp.controllers.FragmentChange"
+        android:name="com.example.todoapp.ui.FragmentChange"
         android:label="ChangeToDoFragment" >
         <argument
             android:name="todoitem"
-            app:argType="com.example.todoapp.model.TodoItem" />
+            app:argType="com.example.todoapp.ui.model.TodoItem" />
     </fragment>
 </navigation>

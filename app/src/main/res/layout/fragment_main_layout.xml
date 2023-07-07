@@ -39,8 +39,6 @@
                     android:fontFamily="@font/roboto_regular"
                     android:text="@string/complete_task"
                     android:textSize="16sp"
-                    android:visibility="gone"
-                    tools:visibility="visible"
                     app:layout_collapseMode="parallax" />
 
                 <androidx.appcompat.widget.Toolbar
@@ -63,11 +61,26 @@
                     android:src="@drawable/ic_show_completed_tasks"
                     android:tint="#007AFF"
                     app:layout_collapseMode="pin"
-                    android:visibility="gone"
-                    tools:visibility="visible"/>
+                    android:visibility="visible" />
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/refresh_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="121dp"
+                    android:layout_marginEnd="80dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="@android:color/transparent"
+                    android:fitsSystemWindows="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_refresh_data"
+                    android:tint="#007AFF"
+                    app:layout_collapseMode="pin"
+                    android:visibility="gone"/>
+
+                <ProgressBar
+                    android:id="@+id/main_fragment_progress_bar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
@@ -103,14 +116,6 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <ProgressBar
-            android:id="@+id/main_fragment_progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="visible"
-            tools:visibility="gone"/>
-
         <androidx.cardview.widget.CardView
             android:id="@+id/recycler_view_root_cardView"
             android:layout_width="match_parent"
@@ -120,8 +125,6 @@
             android:layout_marginBottom="8dp"
             android:elevation="2dp"
             android:padding="19dp"
-            android:visibility="gone"
-            tools:visibility="visible"
             app:cardCornerRadius="8dp"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
@@ -142,8 +145,6 @@
             android:backgroundTint="#007AFF"
             android:contentDescription="@string/add_new_todo"
             android:src="@drawable/ic_fab_add"
-            android:tint="@color/white"
-            android:visibility="gone"
-            tools:visibility="visible"/>
+            android:tint="@color/white" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

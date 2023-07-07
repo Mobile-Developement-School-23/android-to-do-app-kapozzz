@@ -23,4 +23,7 @@
     <string name="creation_date">Дата создания</string>
     <string name="error500">Синхронизация на нескольких устройствах временно недоступна</string>
     <string name="error400">Нестабильное интернет соединение</string>
+    <string name="invalid_server">Не удаётся синхронизировать данные с сервером</string>
+    <string name="invalid_client">Нестабильное интернет соединение</string>
+    <string name="incorrect_operation">Не удалось выполнить операцию</string>
 </resources>

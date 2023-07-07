@@ -22,4 +22,7 @@
     <string name="creation_date">Сreation date</string>
     <string name="error500">Syncing on multiple devices is temporarily unavailable</string>
     <string name="error400">Unstable internet connection</string>
+    <string name="invalid_server">Invalid server</string>
+    <string name="invalid_client">Invalid client</string>
+    <string name="incorrect_operation">Unable to execute the operation</string>
 </resources>

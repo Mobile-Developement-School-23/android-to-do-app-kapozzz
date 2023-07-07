@@ -1,7 +1,7 @@
 package com.example.todoapp.data.client
 
 import androidx.room.TypeConverter
-import com.example.todoapp.model.Importance
+import com.example.todoapp.ui.model.Importance
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
