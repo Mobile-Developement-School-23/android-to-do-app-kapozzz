@@ -1,6 +1,5 @@
 package com.example.todoapp.data.usecases
 
-import android.telephony.AccessNetworkConstants
 import com.example.todoapp.ui.model.NotificationState
 import retrofit2.Response
 

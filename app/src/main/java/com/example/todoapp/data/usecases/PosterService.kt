@@ -14,6 +14,7 @@ import com.example.todoapp.ui.usecases.UserNotificationHandler
 import com.example.todoapp.ui.usecases.UserNotificationHandlerImpl
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import retrofit2.Response
 import javax.inject.Inject
@@ -26,7 +27,7 @@ class PosterService @Inject constructor(
 ) {
     private var clientRevision: Int = 0
 
-    private val _load = MutableLiveData<Boolean>()
+    private val _load = MutableLiveData(false)
 
     val load: LiveData<Boolean>
         get() = _load
@@ -39,11 +40,6 @@ class PosterService @Inject constructor(
                 "Error: ${throwable.message}"
             )
         }
-
-    init {
-        _load.value = false
-        Log.d("LOAD STATE", "${_load.value}")
-    }
 
     suspend fun insertToDo(item: TodoItem) {
         if (clientRevision != getServerRevision()) merge()
@@ -73,11 +69,21 @@ class PosterService @Inject constructor(
     }
 
     suspend fun updateData() {
-        if (application.isInternetAvailableAppField()) merge()
+        withContext(Dispatchers.Main) {
+            _load.value = true
+        }
+
+        delay(1000L)
+
+        merge()
+
+
+        withContext(Dispatchers.Main) {
+            _load.value = false
+        }
     }
 
     private suspend fun merge() {
-        Log.d("LOAD STATE", "${_load.value}")
 
         val serverResponse = api.getAllToDo().body()
 

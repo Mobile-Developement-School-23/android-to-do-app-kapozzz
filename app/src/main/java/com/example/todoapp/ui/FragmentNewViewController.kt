@@ -2,6 +2,7 @@ package com.example.todoapp.ui
 
 import android.app.Activity
 import android.app.DatePickerDialog
+import android.provider.ContactsContract.CommonDataKinds.Im
 import android.text.Editable
 import android.view.View
 import android.widget.EditText
@@ -16,6 +17,8 @@ import androidx.navigation.findNavController
 import com.example.todoapp.R
 import com.example.todoapp.ui.model.Importance
 import com.example.todoapp.ui.model.TodoItem
+import com.example.todoapp.ui.usecases.InitDatePicker
+import com.example.todoapp.ui.usecases.InitPopupMenu
 import com.example.todoapp.viewmodel.ToDoViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -32,13 +35,33 @@ class FragmentNewViewController @Inject constructor(
     private val viewModel: ToDoViewModel,
 ) {
 
-    private var importance: Importance = Importance.LOW
-    private var deadline: Date? = null
+    private var importance: Importance
+        get() = viewModel.changeImportance
+        set(value) {viewModel.changeImportance = value}
+    private var deadline: Date?
+        get() = viewModel.changeDeadline
+        set(value) {viewModel.changeDeadline = value}
 
     fun changeElements() {
-        initPopUp()
-        initDatePicker()
+
+        deadline = null
+        importance = Importance.LOW
+
+        InitPopupMenu(
+            activity,
+            rootView,
+            null,
+            viewModel
+        ).set()
+
+        InitDatePicker(
+            activity,
+            rootView,
+            viewModel
+        ).set()
+
         initOnClickListeners()
+
     }
 
     fun saveItemState() {
@@ -123,85 +146,6 @@ class FragmentNewViewController @Inject constructor(
         viewModel.insertToDo(newToDo)
         rootView.findNavController().popBackStack()
         return true
-    }
-
-    private fun initPopUp() {
-        val importanceButton = rootView.findViewById<TextView>(R.id.importance_button)
-        val popupMenu =
-            androidx.appcompat.widget.PopupMenu(activity, importanceButton)
-        popupMenu.inflate(R.menu.popup_importance_layout)
-        popupMenu.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.low_importance_btn -> {
-                    importanceButton.text = activity.getString(R.string.no)
-                    val color =
-                        ContextCompat.getColor(activity.applicationContext, R.color.gray)
-                    importanceButton.setTextColor(color)
-                    importance = Importance.LOW
-                    true
-                }
-
-                R.id.ordinary_importance_btn -> {
-                    importanceButton.text = activity.getString(R.string.low)
-                    val color =
-                        ContextCompat.getColor(activity.applicationContext, R.color.gray)
-                    importanceButton.setTextColor(color)
-                    importance = Importance.BASIC
-                    true
-                }
-
-                R.id.urgent_importance_btn -> {
-                    importanceButton.text = activity.getString(R.string.urgent)
-                    val color =
-                        ContextCompat.getColor(activity.applicationContext, R.color.red)
-                    importanceButton.setTextColor(color)
-                    importance = Importance.IMPORTANT
-                    true
-                }
-
-                else -> false
-            }
-        }
-
-        importanceButton.setOnClickListener {
-            popupMenu.show()
-        }
-    }
-
-    private fun initDatePicker() {
-        val datePicker = DatePickerDialog(activity)
-        val switch = rootView.findViewById<SwitchCompat>(R.id.deadline_switch)
-        val deadlineText = rootView.findViewById<TextView>(R.id.deadline_text)
-
-        datePicker.setOnCancelListener {
-            switch.isChecked = false
-        }
-
-        datePicker.setOnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-            val cal = Calendar.getInstance()
-            cal.set(year, monthOfYear, dayOfMonth)
-            val date = cal.time
-
-            val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale("ru", "RU"))
-            val formattedDate = dateFormat.format(date)
-
-            deadline = date
-            deadlineText.text = formattedDate
-            deadlineText.visibility = View.VISIBLE
-        }
-
-        switch.setOnCheckedChangeListener { _, b ->
-            if (b) {
-                val cal = Calendar.getInstance()
-                val day = cal.get(Calendar.DAY_OF_MONTH)
-                val month = cal.get(Calendar.MONTH)
-                val year = cal.get(Calendar.YEAR)
-                datePicker.show()
-                datePicker.updateDate(year, month, day)
-            } else {
-                deadlineText.visibility = View.GONE
-            }
-        }
     }
 }
 

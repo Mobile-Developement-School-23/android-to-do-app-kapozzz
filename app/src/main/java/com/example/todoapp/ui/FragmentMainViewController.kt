@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.findNavController
@@ -22,11 +23,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
 
-class FragmentMainViewController @Inject constructor (
-    val activity: Activity,
-    val rootView: View,
-    val lifecycleOwner: LifecycleOwner,
-    val viewModel: ToDoViewModel,
+class FragmentMainViewController @Inject constructor(
+    private val activity: Activity,
+    private val rootView: View,
+    private val lifecycleOwner: LifecycleOwner,
+    private val viewModel: ToDoViewModel,
 ) : OnClickCallbacks {
 
     val recyclerView = rootView.findViewById<RecyclerView>(R.id.main_recycler_view)
@@ -37,15 +38,16 @@ class FragmentMainViewController @Inject constructor (
 
         initRecyclerView()
 
+        initProgressBar()
+
         initObservers()
 
         initSwipeCallbacks()
 
         initListeners()
 
-        initProgressBar()
-
-        viewModel.refreshList()
+        if ((activity.application as ToDoApplication).isInternetAvailableAppField())
+            viewModel.refreshList()
     }
 
     private fun initListeners() {
@@ -107,7 +109,8 @@ class FragmentMainViewController @Inject constructor (
             refreshButton.visibility = View.VISIBLE
             noInternetButton.visibility = View.GONE
             refreshButton.setOnClickListener {
-                viewModel.refreshList()
+                if ((activity.application as ToDoApplication).isInternetAvailableAppField())
+                    viewModel.refreshList()
             }
         } else {
             refreshButton.visibility = View.GONE

@@ -8,10 +8,8 @@ import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.todoapp.data.client.DAO
-import com.example.todoapp.data.model.NetworkResult
 import com.example.todoapp.data.usecases.PeriodicWork
 import com.example.todoapp.data.usecases.PosterService
-import com.example.todoapp.data.model.ElementResponse
 import com.example.todoapp.ioc.ToDoApplication
 import com.example.todoapp.ui.model.TodoItem
 import java.util.concurrent.TimeUnit

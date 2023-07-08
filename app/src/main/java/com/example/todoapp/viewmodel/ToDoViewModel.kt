@@ -5,9 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.example.todoapp.R
 import com.example.todoapp.data.RepositoryToDo
 import com.example.todoapp.ioc.ToDoApplication
+import com.example.todoapp.ui.model.Importance
 import com.example.todoapp.ui.model.NotificationState
 import com.example.todoapp.ui.model.TodoItem
 import com.example.todoapp.ui.usecases.UserNotificationHandler
@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import java.util.Date
 
 class ToDoViewModel(
     val application: ToDoApplication,
@@ -36,6 +37,10 @@ class ToDoViewModel(
     var savedToDoItem: TodoItem? = null
 
     var snackbarWithError: ((message: String) -> Unit)? = null
+
+    var changeDeadline: Date? = null
+
+    var changeImportance: Importance = Importance.LOW
 
     private val completedTaskObserver = Observer<List<TodoItem>?> { list ->
         var counter = 0

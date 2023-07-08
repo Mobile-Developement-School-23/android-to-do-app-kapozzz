@@ -70,5 +70,6 @@ class UserNotificationHandlerImpl private constructor() : UserNotificationHandle
             }
             return notHandler!!
         }
+
     }
 }
