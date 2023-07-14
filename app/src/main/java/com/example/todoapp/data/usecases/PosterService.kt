@@ -9,13 +9,14 @@ import com.example.todoapp.data.model.ElementResponse
 import com.example.todoapp.data.model.NetworkResult
 import com.example.todoapp.data.model.ToDoElement
 import com.example.todoapp.data.ToDoApiService
-import com.example.todoapp.ioc.ToDoApplication
+import com.example.todoapp.ToDoApplication
 import com.example.todoapp.ui.model.TodoItem
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -85,7 +86,6 @@ class PosterService @Inject constructor(
                 withContext(Dispatchers.Main) {
                     _load.value = true
                 }
-                Log.d("LOAD STATE", "${_load.value}")
 
                 val serverList = api.getAllToDo().body()?.list?.toMutableList() ?: mutableListOf()
 
@@ -178,10 +178,11 @@ class PosterService @Inject constructor(
 
                 clientRevision = getServerRevision()
 
+                delay(1000L)
+
                 withContext(Dispatchers.Main) {
                     _load.value = false
                 }
-                Log.d("LOAD STATE", "${_load.value}")
         }
     }
 

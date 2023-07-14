@@ -1,10 +1,8 @@
 package com.example.todoapp.data.usecases
 
-import android.content.Context
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.example.todoapp.data.RepositoryToDo
-import com.example.todoapp.ioc.ToDoApplication
+import com.example.todoapp.ToDoApplication
 
 class PeriodicWork(val context: ToDoApplication, parameters: WorkerParameters): Worker(context, parameters) {
     override fun doWork(): Result {

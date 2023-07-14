@@ -1,10 +1,10 @@
-package com.example.todoapp.ui.usecases
+package com.example.todoapp.utils
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.example.todoapp.R
-import com.example.todoapp.ioc.ToDoApplication
+import com.example.todoapp.ToDoApplication
 import com.example.todoapp.ui.model.NotificationState
 
 object UserNotificationHandlerImpl : UserNotificationHandler {

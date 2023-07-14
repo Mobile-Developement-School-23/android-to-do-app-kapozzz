@@ -1,8 +1,9 @@
-package com.example.todoapp.ioc.di
+package com.example.todoapp.di
 
-import com.example.todoapp.ioc.di.model.FragmentComponent
-import com.example.todoapp.ioc.di.modules.AppModule
-import com.example.todoapp.ioc.di.modules.FragmentModule
+import android.app.Activity
+import androidx.navigation.NavController
+import com.example.todoapp.di.modules.AppModule
+import com.example.todoapp.di.modules.FragmentModule
 import com.example.todoapp.ui.FragmentMain
 import dagger.BindsInstance
 import dagger.Component
@@ -16,7 +17,12 @@ interface FragmentMainComponent {
     interface Builder {
 
         @BindsInstance
-        fun fragmentComponent(fragmentComponent: FragmentComponent): Builder
+        fun setActivity(activity: Activity): Builder
+
+        @BindsInstance
+        fun setNavController(navController: NavController): Builder
+
+
 
         fun build(): FragmentMainComponent
     }

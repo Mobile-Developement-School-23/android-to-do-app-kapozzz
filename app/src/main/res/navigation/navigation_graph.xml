@@ -9,15 +9,6 @@
         android:name="com.example.todoapp.ui.FragmentMain"
         android:label="MainToDoFragment" >
         <action
-            android:id="@+id/action_mainToDoFragment_to_newToDoFragment"
-            app:destination="@id/newToDoFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"
-            app:popUpTo="@id/mainToDoFragment"
-            app:popUpToInclusive="false" />
-        <action
             android:id="@+id/action_mainToDoFragment_to_changeToDoFragment"
             app:destination="@id/changeToDoFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
@@ -27,15 +18,7 @@
             app:popUpTo="@id/mainToDoFragment" />
     </fragment>
     <fragment
-        android:id="@+id/newToDoFragment"
-        android:name="com.example.todoapp.ui.FragmentNew"
-        android:label="NewToDoFragment" />
-    <fragment
         android:id="@+id/changeToDoFragment"
         android:name="com.example.todoapp.ui.FragmentChange"
-        android:label="ChangeToDoFragment" >
-        <argument
-            android:name="todoitem"
-            app:argType="com.example.todoapp.ui.model.TodoItem" />
-    </fragment>
+        android:label="ChangeToDoFragment" />
 </navigation>

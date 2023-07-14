@@ -11,7 +11,7 @@ import com.example.todoapp.data.model.NetworkResult
 import com.example.todoapp.data.usecases.PeriodicWork
 import com.example.todoapp.data.usecases.PosterService
 import com.example.todoapp.data.model.ElementResponse
-import com.example.todoapp.ioc.ToDoApplication
+import com.example.todoapp.ToDoApplication
 import com.example.todoapp.ui.model.TodoItem
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -35,6 +35,8 @@ class RepositoryToDo @Inject constructor(
 
         WorkManager.getInstance(application).enqueue(workPeriodicRequest)
     }
+
+    suspend fun checkIfItemExists(itemID: String): Boolean = dao.checkIfItemExists(itemID)
 
     fun updateDataFromServer() {
         poster.updateData()

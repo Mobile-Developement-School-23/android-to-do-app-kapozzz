@@ -1,5 +1,8 @@
-package com.example.todoapp.ioc.di.modules
+package com.example.todoapp.di.modules
 
+import android.app.Activity
+import android.content.Context
+import android.net.ConnectivityManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import com.example.todoapp.data.client.DAO
@@ -7,12 +10,11 @@ import com.example.todoapp.data.client.ToDoDB
 import com.example.todoapp.data.usecases.Gson
 import com.example.todoapp.data.usecases.OkHttpClient
 import com.example.todoapp.data.ToDoApiService
-import com.example.todoapp.ioc.ToDoApplication
-import com.example.todoapp.ioc.di.model.FragmentComponent
-import com.example.todoapp.ui.usecases.UserNotificationHandler
-import com.example.todoapp.ui.usecases.UserNotificationHandlerImpl
-import com.example.todoapp.viewmodel.ToDoViewModel
-import com.example.todoapp.viewmodel.ToDoViewModelFactory
+import com.example.todoapp.ToDoApplication
+import com.example.todoapp.utils.UserNotificationHandler
+import com.example.todoapp.utils.UserNotificationHandlerImpl
+import com.example.todoapp.ui.viewmodel.ToDoViewModel
+import com.example.todoapp.ui.viewmodel.ToDoViewModelFactory
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
@@ -21,9 +23,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 @Module(includes = [NetworkModule::class, LocalDataModule::class])
 class AppModule {
     @Provides
-    fun provideViewModel(fragmentComponent: FragmentComponent, viewModelFactory: ToDoViewModelFactory): ToDoViewModel {
+    fun provideViewModel(activity: Activity, viewModelFactory: ToDoViewModelFactory): ToDoViewModel {
         return ViewModelProvider(
-            fragmentComponent.activity as ViewModelStoreOwner,
+            activity as ViewModelStoreOwner,
             viewModelFactory
         )[ToDoViewModel::class.java]
     }
@@ -51,6 +53,11 @@ class NetworkModule {
             .addConverterFactory(GsonConverterFactory.create(gson.getGson))
             .build()
             .create(ToDoApiService::class.java)
+    }
+
+    @Provides
+    fun provideConnectivityManager(application: ToDoApplication): ConnectivityManager {
+        return application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     }
 
 }

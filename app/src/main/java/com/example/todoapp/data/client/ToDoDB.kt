@@ -4,7 +4,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.todoapp.ioc.ToDoApplication
+import com.example.todoapp.ToDoApplication
 import com.example.todoapp.ui.model.TodoItem
 
 @Database(entities = [TodoItem::class], version = 24, exportSchema = false)

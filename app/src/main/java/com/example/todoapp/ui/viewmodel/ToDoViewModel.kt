@@ -1,5 +1,6 @@
-package com.example.todoapp.viewmodel
+package com.example.todoapp.ui.viewmodel
 
+import android.net.ConnectivityManager
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -9,25 +10,40 @@ import com.example.todoapp.R
 import com.example.todoapp.data.model.NetworkResult
 import com.example.todoapp.data.RepositoryToDo
 import com.example.todoapp.data.model.ElementResponse
-import com.example.todoapp.ioc.ToDoApplication
+import com.example.todoapp.ToDoApplication
 import com.example.todoapp.ui.model.TodoItem
+import com.example.todoapp.utils.NetworkConnectivityStatus
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ToDoViewModel(val application: ToDoApplication, val repository: RepositoryToDo) : AndroidViewModel(application) {
+class ToDoViewModel(
+    application: ToDoApplication,
+    private val repository: RepositoryToDo,
+    val internetStatus: NetworkConnectivityStatus
+) : AndroidViewModel(application) {
 
     private val scope = scopeConstructor()
 
     var progressBarIsActive: LiveData<Boolean> = repository.repositoryLoadData
 
+    private val _showCompletedTasks = MutableLiveData(true)
+
+    val showCompletedTasks: LiveData<Boolean>
+        get() = _showCompletedTasks
+
     var allToDoItems: LiveData<List<TodoItem>?> = repository.getToDoItems()
 
-    var completedTaskCount = MutableLiveData<Int>()
+
+    private val _completedTaskCount = MutableLiveData<Int>()
+
+    val completedTaskCount: LiveData<Int>
+        get() = _completedTaskCount
 
     var savedToDoItem: TodoItem? = null
 
@@ -35,7 +51,7 @@ class ToDoViewModel(val application: ToDoApplication, val repository: Repository
 
     private val observer = Observer<List<TodoItem>?> { list ->
         var counter = 0
-        completedTaskCount.value = if (list.isNullOrEmpty()) 0
+        _completedTaskCount.value = if (list.isNullOrEmpty()) 0
         else {
             for (task in list) {
                 if (task.done) ++counter
@@ -44,9 +60,25 @@ class ToDoViewModel(val application: ToDoApplication, val repository: Repository
         }
     }
 
+    val currentItem = MutableLiveData<TodoItem?>(null)
+
     init {
         allToDoItems.observeForever(observer)
     }
+
+    fun saveOrUpdateItem (item: TodoItem) {
+        scope.launch {
+            val isExists = async {
+                repository.checkIfItemExists(item.id.toString())
+            }
+            if (isExists.await()) updateToDo(item) else insertToDo(item)
+        }
+    }
+
+    fun setShowCompletedTasksState(state: Boolean) {
+        _showCompletedTasks.value = state
+    }
+
 
     fun insertToDo(newToDo: TodoItem) {
         scope.launch {
@@ -69,7 +101,9 @@ class ToDoViewModel(val application: ToDoApplication, val repository: Repository
         }
     }
 
-    fun refreshList() { repository.updateDataFromServer() }
+    fun refreshList() {
+        repository.updateDataFromServer()
+    }
 
     private fun scopeConstructor(): CoroutineScope {
         val coroutineExceptionHandler =

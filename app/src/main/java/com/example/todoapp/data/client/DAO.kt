@@ -10,6 +10,9 @@ import com.example.todoapp.ui.model.TodoItem
 @Dao
 interface DAO {
 
+    @Query("SELECT EXISTS(SELECT 1 FROM TodoItems WHERE id = :itemId LIMIT 1)")
+    fun checkIfItemExists(itemId: String): Boolean
+
     @Insert
     suspend fun insertToDo(newToDo: TodoItem)
 

@@ -3,7 +3,7 @@
     <string name="app_name">Мои дела</string>
     <string name="save_button_text">СОХРАНИТЬ</string>
     <string name="input_note_hint">Что-то надо сделать…</string>
-    <string name="importance_text">Важность</string>
+    <string name="importance_text">Важность:</string>
     <string name="no">Нет</string>
     <string name="until_do">Сделать до</string>
     <string name="delete">Удалить</string>

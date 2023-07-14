@@ -4,22 +4,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.ui.platform.ComposeView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentNewRedactTodoLayoutBinding
-import com.example.todoapp.ioc.di.model.FragmentComponent
-import com.example.todoapp.ioc.di.DaggerFragmentChangeComponent
+import com.example.todoapp.di.model.FragmentComponent
+import com.example.todoapp.di.DaggerFragmentChangeComponent
 import javax.inject.Inject
 
 open class FragmentChange : Fragment() {
 
     private lateinit var binding: FragmentNewRedactTodoLayoutBinding
 
-    private lateinit var argumentsFromMain: FragmentChangeArgs
-
     @Inject
-    lateinit var fragmentChangeViewController: FragmentChangeViewController
+    lateinit var layout: FragmentChangeLayout
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,28 +42,16 @@ open class FragmentChange : Fragment() {
 
         DaggerFragmentChangeComponent.builder()
             .fragmentComponent(component)
+            .setActivity(requireActivity())
+            .setNavController(requireActivity().findNavController(R.id.nav_host_container))
             .build()
             .inject(this)
 
-        if (savedInstanceState != null) {
-            fragmentChangeViewController.configurationChange()
-        } else {
-            argumentsFromMain = FragmentChangeArgs.fromBundle(requireArguments())
-            fragmentChangeViewController.setArgumentsFromMain(argumentsFromMain.todoitem)
+
+        return ComposeView(requireActivity()).apply {
+            setContent {
+                layout.SetUI()
+            }
         }
-
-        fragmentChangeViewController.setViews()
-
-        return binding.root
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt(FLAG, 1)
-        fragmentChangeViewController.saveToDoState()
-    }
-
-    companion object {
-        private const val FLAG = "82031Y13971317-1319-38PCN8912-19722"
     }
 }

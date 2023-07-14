@@ -14,7 +14,7 @@
         android:roundIcon="@drawable/ic_new"
         android:supportsRtl="true"
         android:theme="@style/Theme.ToDoApp"
-        android:name=".ioc.ToDoApplication"
+        android:name=".ToDoApplication"
         tools:targetApi="31">
         <activity
             android:name=".ui.MainActivity"

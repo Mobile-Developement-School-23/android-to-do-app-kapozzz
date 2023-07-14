@@ -1,8 +1,8 @@
-package com.example.todoapp.ioc.di
+package com.example.todoapp.di
 
 
 import com.example.todoapp.data.RepositoryToDo
-import com.example.todoapp.ioc.di.modules.AppModule
+import com.example.todoapp.di.modules.AppModule
 import dagger.Component
 
 

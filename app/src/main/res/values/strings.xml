@@ -2,7 +2,7 @@
     <string name="app_name">ToDo App</string>
     <string name="save_button_text">SAVE</string>
     <string name="input_note_hint">Something has to be done…</string>
-    <string name="importance_text">Importance</string>
+    <string name="importance_text">Importance:</string>
     <string name="no">No</string>
     <string name="until_do">Make up to</string>
     <string name="delete">Delete</string>

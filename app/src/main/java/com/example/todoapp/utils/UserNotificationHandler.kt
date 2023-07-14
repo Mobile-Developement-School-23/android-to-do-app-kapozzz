@@ -1,6 +1,5 @@
-package com.example.todoapp.ui.usecases
+package com.example.todoapp.utils
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.todoapp.ui.model.NotificationState
 

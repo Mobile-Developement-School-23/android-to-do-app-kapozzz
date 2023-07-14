@@ -1,24 +1,25 @@
 package com.example.todoapp.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.ui.platform.ComposeView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
+import com.example.myapplication.ui.theme.ApplicationTheme
 import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentMainLayoutBinding
-import com.example.todoapp.ioc.di.model.FragmentComponent
-import com.example.todoapp.ioc.di.DaggerFragmentMainComponent
+import com.example.todoapp.di.DaggerFragmentMainComponent
 import javax.inject.Inject
 
-
-class FragmentMain : Fragment(){
+class FragmentMain : Fragment() {
 
     private lateinit var binding: FragmentMainLayoutBinding
 
-    @Inject lateinit var fragmentMainViewController: FragmentMainViewController
+    @Inject
+    lateinit var layout: FragmentMainLayout
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,21 +29,24 @@ class FragmentMain : Fragment(){
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_layout, container, false)
 
-        val component = FragmentComponent(
-            requireActivity(),
-            binding.root,
-            viewLifecycleOwner
-        )
-
         DaggerFragmentMainComponent
             .builder()
-            .fragmentComponent(component)
+            .setActivity(requireActivity())
+            .setNavController(requireActivity().findNavController(R.id.nav_host_container))
             .build()
             .inject(this)
 
-        Log.d("Controller state", "${fragmentMainViewController.recyclerView}")
-        fragmentMainViewController.setViews()
-        return binding.root
+        return ComposeView(requireContext()).apply {
+            setContent {
+
+                ApplicationTheme {
+
+                    layout.SetUI()
+
+                }
+
+            }
+        }
     }
 }
 

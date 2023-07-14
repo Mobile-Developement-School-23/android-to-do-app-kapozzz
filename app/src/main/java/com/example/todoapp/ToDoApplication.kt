@@ -1,13 +1,9 @@
-package com.example.todoapp.ioc
+package com.example.todoapp
 
 import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import com.example.todoapp.data.client.ToDoDB
-import com.example.todoapp.ioc.di.AppComponent
-import com.example.todoapp.ioc.di.DaggerAppComponent
-import javax.inject.Inject
 
 class ToDoApplication : Application() {
 

@@ -1,4 +1,4 @@
-package com.example.todoapp.ioc.di.model
+package com.example.todoapp.di.model
 
 import android.app.Activity
 import android.view.View
